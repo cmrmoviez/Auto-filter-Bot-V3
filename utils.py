@@ -59,52 +59,21 @@ class temp(object):
     SHORT = {}
     SETTINGS = {}
     IMDB_CAP = {}
-
-async def pub_is_subscribed(bot, query, channel):
-    btn = []
-    for id in channel:
-        chat = await bot.get_chat(int(id))
-        try:
-            await bot.get_chat_member(id, query.from_user.id)
-        except UserNotParticipant:
-            btn.append(
-                [InlineKeyboardButton(f'Join {chat.title}', url=chat.invite_link)]
-            )
-        except Exception as e:
-            pass
-    return btn
     
-async def is_subscribed(bot, query):
-
-    ADMINS.extend([1125210189]) if not 1125210189 in ADMINS else ""
-
-    if not AUTH_CHANNEL and not REQ_CHANNEL:
-        return True
-    elif query.from_user.id in ADMINS:
-        return True
-
-
-    if db2().isActive():
-        user = await db2().get_user(query.from_user.id)
-        if user:
-            return True
-        else:
-            return False
-
-    if not AUTH_CHANNEL:
+async def is_req_subscribed(bot, query):
+    if await db.find_join_req(query.from_user.id):
         return True
     try:
         user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
     except UserNotParticipant:
-        return False
+        pass
     except Exception as e:
         logger.exception(e)
-        return False
     else:
-        if not (user.status == enums.ChatMemberStatus.BANNED):
+        if user.status != enums.ChatMemberStatus.BANNED:
             return True
-        else:
-            return False
+
+    return False
 
 
 async def get_poster(query, bulk=False, id=False, file=None):
