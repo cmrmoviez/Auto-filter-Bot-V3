@@ -54,6 +54,14 @@ DATABASE_URI = environ.get('DATABASE_URI', "mongodb+srv://Cluster0:Cluster0@clus
 DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 
+# FSUB
+auth_channel = environ.get('AUTH_CHANNEL')
+AUTH_CHANNEL = int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
+# Set to False inside the bracket if you don't want to use Request Channel else set it to Channel ID
+REQ_CHANNEL = environ.get("REQ_CHANNEL", '-1002097366199')
+REQ_CHANNEL = int(REQ_CHANNEL) if REQ_CHANNEL and id_pattern.search(REQ_CHANNEL) else False
+JOIN_REQS_DB = environ.get("JOIN_REQS_DB", DATABASE_URI)
+
 # Premium And Referal Settings
 PREMIUM_AND_REFERAL_MODE = bool(environ.get('PREMIUM_AND_REFERAL_MODE', True)) # Set Ture Or False
 
